@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>Blackjack</title>
-    <script src="jquery.js"></script>
-    <script src="lodash.js"></script>
-    <script src="blackjack-functions.js"></script>
+    <script src="//code.jquery.com/jquery-3.2.1.min.js"
+     integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+     crossorigin="anonymous"></script>
     <script src="blackjack.js"></script>
     <link href="style.css" rel="stylesheet">
   </head>
@@ -15,6 +15,8 @@
       <label>Dealer: </label>
       <label id="dealer-points" class="points"></label>
       <div id="dealer-hand" class="hand">
+        <!-- Step 3: Cards on the table -->
+        <!-- <img src="images/2_of_clubs.png" alt="Clubs-2"> -->
       </div>
       <label>Player: </label>
       <label id="player-points" class="points"></label>
@@ -28,4 +30,3 @@
       </div>
     </div>
   </body>
-</html>
