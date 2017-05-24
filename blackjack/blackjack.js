@@ -1,8 +1,9 @@
 /*BLACKJACK GAME*/
   // html page (index.html)
   // sytle (style.css)
+
 $(function game() {
-  // Creating cards:
+  // CREATING CARDS:
   var cards = []
   for (var i = 1; i <= 13; i++) {
     cards.push({ point: i, suit: 'spades' }); // change to Card constructor
@@ -13,73 +14,38 @@ $(function game() {
 
   function getImage(card){
     var pointConversion = {
+      //point:'card'
       1:'ace',
       11:'jack',
       12:'queen',
       13:'king'
     };
-    var point;
+    var cardName;
     if(card.point in pointConversion){
-      point = pointConversion[card.point];
+      cardName = pointConversion[card.point];
     }
     else{
-      point = card.point;
+      cardName = card.point;
     }
-    return("/images/" + point + "_of_" + card.suit + ".png");
+    return("/images/" + cardName + "_of_" + card.suit + ".png");
   }
 
-  // Creating and dealing a deck of cards (Shuffle cards)
+  //CREATING A DECK OF CARDS
   var deck = [];
   function random(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
   }
-  function shuffle(array){
+  function shuffle(cards){
     for(x=0; x<52; x++){
-      deck.push(array.splice(random(0,array.length),1));
+      deck.push(cards.splice(random(0,cards.length),1));
     }
   }
 
-
-
-
-
-
-  function calculatePoints(array){
-    var points = 0;
-    for(x=0; x<array.length; x++){
-      if(array[x][0].point == 1){
-        if((21-points)<11){
-          points += 1;
-        } else {
-          points += 11;
-        }
-      }else if(array[x][0].point > 10){
-        points += 10;
-      }else{
-        points += array[x][0].point;
-      }
-    }
-    return points;
-  }
-  function determineWinner(){
-    if(calculatePoints(dealerHand) > calculatePoints(playerHand)){
-      $('#messages').text('You lose!');
-    }else if(calculatePoints(playerHand) > calculatePoints(dealerHand)){
-      $('#messages').text('You win!');
-    }else{
-      $('#messages').text("It's a draw!");
-    }
-  }
-
-  $('#play-again').hide();
-
-  // Deal the deck
+  // DEALING THE CARDS
   var dealerHand = [];
   var playerHand = [];
-  var hitCount = 0;
-  var standCount = 0;
   var cards2 = cards.slice();
 
   shuffle(cards2);
@@ -88,15 +54,48 @@ $(function game() {
     playerHand = [deck.pop(), deck.pop()];
     $('#dealer-hand').append('<img src="' + getImage(dealerHand[0][0]) + '"/><img src="' + getImage(dealerHand[1][0]) + '"/>');
     $('#player-hand').append('<img src="' + getImage(playerHand[0][0]) + '"/><img src="' + getImage(playerHand[1][0]) + '"/>');
-    $('#dealer-points').text(calculatePoints(dealerHand));
-    $('#player-points').text(calculatePoints(playerHand));
+    $('#dealer-points').text(calcTotalpts(dealerHand));
+    $('#player-points').text(calcTotalpts(playerHand));
     $('#deal-button').hide();
   });
+
+  // CALCULATING POINTS OF HAND
+    function calcTotalpts(array){
+      var totalpts = 0;
+      for(x=0; x<array.length; x++){
+        if(array[x][0].point == 1){
+          if((21-totalpts)<11){
+            totalpts += 1;
+          } else {
+            totalpts += 11;
+          }
+        }else if(array[x][0].point > 10){
+          totalpts += 10;
+        }else{
+          totalpts += array[x][0].point;
+        }
+      }
+      return totalpts;
+    }
+
+  //DETERMINING A WINNER
+  function determineWinner(){
+    if(calcTotalpts(dealerHand) > calcTotalpts(playerHand)){
+      $('#messages').text('You lose!');
+    }else if(calcTotalpts(playerHand) > calcTotalpts(dealerHand)){
+      $('#messages').text('You win!');
+    }else{
+      $('#messages').text("It's a draw!");
+    }
+  }
+
+  //HIT (DEALING ONE MORE CARD TO PLAYER)
+  var hitCount = 0;
   $('#hit-button').click(function(){
     playerHand.push(deck.pop());
     $('#player-hand').append('<img src="' + getImage(playerHand[hitCount][0]) + '"/>');
-    $('#player-points').text(calculatePoints(playerHand));
-    if(calculatePoints(playerHand)>21){
+    $('#player-points').text(calcTotalpts(playerHand));
+    if(calcTotalpts(playerHand)>21){
       $('#messages').text("You've busted! Dealer wins.");
       $('#hit-button').hide();
       $('#stand-button').hide();
@@ -105,15 +104,17 @@ $(function game() {
     hitCount += 1;
   });
 
+  //STAND (DEALING MORE CARD TO DEALER)
+  var standCount = 0;
   $('#stand-button').click(function(){
     $('#hit-button').hide();
-    while(calculatePoints(dealerHand)<17){
+    while(calcTotalpts(dealerHand)<17){
       dealerHand.push(deck.pop());
       $('#dealer-hand').append('<img src="' + getImage(dealerHand[standCount][0]) + '"/>');
-      $('#dealer-points').text(calculatePoints(dealerHand));
+      $('#dealer-points').text(calcTotalpts(dealerHand));
       standCount += 1;
     }
-    if(calculatePoints(dealerHand)>21){
+    if(calcTotalpts(dealerHand)>21){
         $('#messages').text("Dealer has busted! You win!");
     } else {
       determineWinner();
@@ -122,13 +123,15 @@ $(function game() {
     $('#play-again').show();
   });
 
-  //Restarting the game:
+  //RESTARTING GAME
+  $('#play-again').click(function(){
+    restart();
+  });
+
   function restart(){
     cards2 = cards.slice();
     deck = [];
     shuffle(cards2);
-    // hitCount = 2;
-    // standCount = 2;
     dealerHand = [];
     playerHand = [];
     $('#dealer-hand').html('');
@@ -142,8 +145,6 @@ $(function game() {
     $('#stand-button').show();
   }
 
-  $('#play-again').click(function(){
-    restart();
-  });
+  $('#play-again').hide();
 
 });
