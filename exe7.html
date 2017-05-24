@@ -17,15 +17,28 @@
     4. the ability to edit an existing task
 
     */
+
+    // Creating the adding a list item by clicking the add button.
+
     $ (document).ready (function () {
       $('#add-button').click(function (){
         var text = $('#description').val();
-        $('#todo-list').append(`<li>${text} <button id="x-button">x</button> </li>`);
+        $('#todo-list').append(`<li>` + `${text}`+ `<input id="checkbox" type="checkbox" name="checkbox">` + `<button id="x-button" type='button' name='button'>x</button>` + `</li>`);
       });
 
-      $('#x-button').on("click", function (){
-        $('#todo-list').remove()
+      // Creating the adding a remove button, to remove list items.
+
+      $(document).on("click", "#x-button", function() {
+        $(this).parent('li').remove();
       });
+
+      // Creating the adding a checkbox.
+
+      $(document).on("click", "#checkbox", function (){
+        $(this).parent('li').css('text-decoration', 'line-through');
+      });
+
+
 
     });
     </script>
@@ -45,7 +58,7 @@
       <input id="description" type="text" name="description">
       <button id="add-button">Add Task</button>
       <ul id="todo-list">
-        <li>Feed the cat <button id="x-button">x</button> </li>
+        <li>Feed the cat <input id="checkbox" type="checkbox" name="checkbox"> <button id="x-button" type="button" name="button">x</button> </li>
       </ul>
     </div>
   </body>
